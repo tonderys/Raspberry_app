@@ -1,4 +1,4 @@
-from Tkinter import *
+from tkinter import *
 
 class NoTuplePassedToDraw (Exception):
     pass
@@ -11,7 +11,7 @@ class Point:
 class DrawGraph:
     min_value = 0
     max_value = 0
-    def __init__(self,top_window, values, times, width = 500, height = 500, row = 1, column = 1):
+    def __init__(self,top_window, values, times, width = 500, height = 500, row = 1, column = 1, rowspan = 1, columnspan = 1):
         if type(values) is not tuple: raise NoTuplePassedToDraw
         if type(times) is not tuple: raise NoTuplePassedToDraw
         self.times = times
@@ -33,7 +33,7 @@ class DrawGraph:
 
         self.top_window = top_window
 
-        self.setup_frame(frame_width, frame_height, row, column)
+        self.setup_frame(frame_width, frame_height, row, column, rowspan, columnspan)
         self.setup_canvas(frame_width, canvas_width, canvas_height)
  
         self.set_min_max_values()
@@ -45,9 +45,9 @@ class DrawGraph:
         self.draw_y_axis_line()
         self.draw_graph()
 
-    def setup_frame(self, frame_width, frame_height, row, column):
+    def setup_frame(self, frame_width, frame_height, row, column, rowspan, columnspan):
         self.frame = Frame(self.top_window, width = frame_width, height = frame_height, bd = 1)
-        self.frame.grid(row = 0, column = 0)
+        self.frame.grid(row = row, column = column, rowspan = rowspan, columnspan = columnspan)
         self.frame.grid_propagate(False)
 
     def setup_canvas(self, frame_width, canvas_width, canvas_height):
@@ -75,8 +75,10 @@ class DrawGraph:
         self.range_of_values = self.max_value - self.min_value
 
     def set_scale(self):
-        self.scale = float(10 * self.y_bottom / self.range_of_values) / 10
-
+        if self.range_of_values != 0:
+            self.scale = float(10 * self.y_bottom / self.range_of_values) / 10
+        else:
+            self.scale = 1
     def set_x_axis_position(self):
         if self.min_value < 0 and self.max_value > 0:
             self.x_axis = self.max_value * self.scale
