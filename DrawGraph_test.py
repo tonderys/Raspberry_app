@@ -5,14 +5,14 @@ class DrawGraph_test(unittest.TestCase):
     def setUp(self):
         self.top = Tk()
     def test_width_of_canvas(self):
-        graph = DrawGraph(self.top, (1 ,2 ,3), (0 ,35 ,2))
+        graph = DrawGraph(self.top, (1 ,2 ,3), (0, 2, 35))
         self.assertEqual(graph.max_time_value, 35)
 
-    def test_no_value_less_than_zero(self):
+    def test_min_value_when_no_value_less_than_zero(self):
         graph = DrawGraph(self.top,(100,45,23),(1,2,3))
         self.assertEqual(graph.min_value, 0)
 
-    def test_no_value_more_than_zero(self):
+    def test_max_value_when_no_value_more_than_zero(self):
         graph = DrawGraph(self.top,(-10,-1,-102),(1,2,3))
         self.assertEqual(graph.max_value,0)
 
@@ -49,6 +49,13 @@ class DrawGraph_test(unittest.TestCase):
         self.assertEqual(graph.scale, 4)
         self.assertEqual(graph.x_axis, 0)
 
+    def test_rank_when_values_less_than_100(self):
+        graph = DrawGraph(self.top, (0, 90), (1,2))
+        self.assertEqual(graph.rank, 10)
+
+    def test_rank_when_values_less_than_300(self):
+        graph = DrawGraph(self.top, (0, 290), (1,2))
+        self.assertEqual(graph.rank, 10)
     
 if __name__ == "__main__":
     unittest.main() 
