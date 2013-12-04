@@ -99,9 +99,9 @@ class DrawGraph:
         for i in range(1,len(self.values)):
             self.board.create_line(get_x_from_times(i-1), get_y_from_values(i-1), get_x_from_times(i), get_y_from_values(i))
             self.board.create_line(get_x_from_times(i), self.y_top, get_x_from_times(i), self.y_bottom, fill="grey")
-            if self.values[i]/self.rank != remembered_x:
+            if int(self.values[i]/self.rank) != remembered_x:
                 self.board.create_text(get_x_from_times(i), get_y_from_values(i), text = self.values[i], font = "arial 8")
-                remembered_x = self.values[i]/self.rank
+                remembered_x = int(self.values[i]/self.rank)
             
         for time in range(0, self.max_time_value, 100):
             self.board.create_text(time, self.y_bottom + 5,  text = time, font = "arial 10")
