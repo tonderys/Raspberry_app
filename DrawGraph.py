@@ -113,8 +113,8 @@ class DrawGraph:
                 remembered_x = int(self.values[i]/self.rank)
             self.board.create_line(get_x_from_times(i), self.y_top, get_x_from_times(i), self.y_bottom, fill="grey")
             
-        for time in range(0, int(self.max_time_value), 100):
-            self.board.create_text(time, self.y_bottom + 5,  text = time, font = "arial 10")
+        for time in range(0, int(self.max_time_value), 10):
+            self.board.create_text(time * self.x_scale, self.y_bottom + 5,  text = time, font = "arial 10")
 
     def get_y_from_values(self, y):
         return int(self.x_axis-(self.values[y]*self.y_scale))
@@ -122,14 +122,13 @@ class DrawGraph:
     def get_x_from_times(self, x):
         return int(self.times[x]*self.x_scale)
 
-    def export_to_file(self, filename="img"):
-        self.board.postscript(file = filename + ".png", colormode = "color")
-
     def make_image_to_file(self, filename="img"):
         white = (255, 255, 255)
         black = (0, 0, 0)
         grey = (32, 32, 32)
-        value_font = ImageFont.truetype("arial.ttf", 8)
+        blue = (0, 0, 255)
+        green = (32, 128, 64)
+        value_font = ImageFont.truetype("arial.ttf", 10)
         time_font = ImageFont.truetype("arial.ttf", 10)
 
         image = Image.new("RGB", (int(self.canvas_width), int(self.canvas_height+15)), white)
@@ -139,15 +138,17 @@ class DrawGraph:
         get_y_from_values = self.get_y_from_values
         remembered_x = 0
  
+        draw.line([self.x_left_border, self.x_axis, self.x_right_border, self.x_axis],black)
+        draw.line([self.x_left_border,self.y_top,self.x_left_border,self.y_bottom], black)
         for i in range(1,len(self.values)):
             draw.line([get_x_from_times(i-1), get_y_from_values(i-1), get_x_from_times(i), get_y_from_values(i)], black)
             if int(self.values[i]/self.rank) != remembered_x:
-                draw.text([get_x_from_times(i), get_y_from_values(i)], str(self.values[i]), black, value_font)
+                draw.text([get_x_from_times(i), get_y_from_values(i)], str(self.values[i]), green, value_font)
                 remembered_x = int(self.values[i]/self.rank)
             draw.line([get_x_from_times(i), int(self.y_top), get_x_from_times(i), int(self.y_bottom)], grey)
             
-        for time in range(0, int(self.max_time_value), 100):
-            draw.text([time, int(self.y_bottom) + 5], str(time), black, time_font)
+        for time in range(0, int(self.max_time_value), 10):
+            draw.text([time * self.x_scale, int(self.y_bottom + 5)], str(time), blue, time_font)
         image.save(filename) 
 
 if __name__ == "__main__":

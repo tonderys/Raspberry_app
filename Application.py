@@ -4,6 +4,7 @@ import os
 from time import gmtime, strftime
 from Measure_thread import *
 from Draw_thread import *
+import ftplib
 
 class Application:
     row = 0
@@ -71,6 +72,12 @@ class Application:
         if not os.path.exists(self.folder):
             os.makedirs(self.folder)
         self.make_graph_index()
+        session = ftplib.FTP('pwr184040.cba.pl', 'admin@pwr184040.cba.pl', 'kurwa666mac')
+        file = open(self.folder + "/index.html", 'rb')
+        session.storbinary("STOR index.html", file)
+        file = open(self.folder + "/img.png", 'rb')
+        session.storbinary("STOR img.png", file)
+        session.quit
 
     def make_graph_image(self):
         self.drawer.graph.make_image_to_file(self.folder + "/img.png")
