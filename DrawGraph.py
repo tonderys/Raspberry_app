@@ -18,7 +18,12 @@ class DrawGraph:
         self.max_time_value = self.times[-1]
         self.values = values
 
-        canvas_width = self.max_time_value 
+        self.set_min_max_values()
+        self.set_values_rank()
+        self.set_range_of_values()
+        self.set_x_scale()
+
+        canvas_width = self.max_time_value * self.x_scale 
         canvas_height = height
         scroll_height = 15
         frame_width = width
@@ -33,14 +38,11 @@ class DrawGraph:
 
         self.top_window = top_window
 
+        self.set_y_scale()
+        self.set_x_axis_position()
         self.setup_frame(frame_width, frame_height, row, column, rowspan, columnspan)
         self.setup_canvas(frame_width, canvas_width, canvas_height)
  
-        self.set_min_max_values()
-        self.set_values_rank()
-        self.set_range_of_values()
-        self.set_scale()
-        self.set_x_axis_position()
         self.draw_x_axis_line()
         self.draw_y_axis_line()
         self.draw_graph()
@@ -74,14 +76,21 @@ class DrawGraph:
     def set_range_of_values(self):
         self.range_of_values = self.max_value - self.min_value
 
-    def set_scale(self):
+    def set_y_scale(self):
         if self.range_of_values != 0:
-            self.scale = float(10 * self.y_bottom / self.range_of_values) / 10
+            self.y_scale = float(10 * self.y_bottom / self.range_of_values) / 10
         else:
-            self.scale = 1
+            self.y_scale = 1
+
+    def set_x_scale(self):
+        if len(self.times) > 1:
+            self.x_scale = 10 / (self.times[1] - self.times[0])
+        else:
+            self.x_scale = 1
+
     def set_x_axis_position(self):
         if self.min_value < 0 and self.max_value > 0:
-            self.x_axis = self.max_value * self.scale
+            self.x_axis = self.max_value * self.y_scale
         elif self.min_value < 0 and self.max_value <= 0:
             self.x_axis = 0
 
@@ -103,14 +112,14 @@ class DrawGraph:
                 self.board.create_text(get_x_from_times(i), get_y_from_values(i), text = self.values[i], font = "arial 8")
                 remembered_x = int(self.values[i]/self.rank)
             
-        for time in range(0, self.max_time_value, 100):
+        for time in range(0, int(self.max_time_value), 100):
             self.board.create_text(time, self.y_bottom + 5,  text = time, font = "arial 10")
 
     def get_y_from_values(self, y):
-        return self.x_axis-(self.values[y]*self.scale)
+        return self.x_axis-(self.values[y]*self.y_scale)
 
     def get_x_from_times(self, x):
-        return self.times[x]
+        return self.times[x]*self.x_scale
 
 if __name__ == "__main__":
     top_window = Tk()

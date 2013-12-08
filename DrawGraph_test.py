@@ -24,30 +24,39 @@ class DrawGraph_test(unittest.TestCase):
         graph = DrawGraph(self.top,(-1, 0, 4),(1,2,3))
         self.assertEqual(graph.max_value, 4)
 
-    def test_scale_above_and_including_zero(self):
+    def test_y_scale_above_and_including_zero(self):
         graph = DrawGraph(self.top,(0,5),(1,2), 510, 510)
-        self.assertEqual(graph.scale, 100)
+        self.assertEqual(graph.y_scale, 100)
         self.assertEqual(graph.x_axis, 500)
 
-    def test_scale_above_and_excluding_zero(self):
+    def test_y_scale_above_and_excluding_zero(self):
         graph = DrawGraph(self.top,(10,5),(1,2), 510, 510)
-        self.assertEqual(graph.scale, 50)
+        self.assertEqual(graph.y_scale, 50)
         self.assertEqual(graph.x_axis, 500)
 
-    def test_scale_above_and_below_zero(self):
+    def test_y_scale_above_and_below_zero(self):
         graph = DrawGraph(self.top,(-2,5),(1,2), 80, 80)
-        self.assertEqual(graph.scale, 10)
+        self.assertEqual(graph.y_scale, 10)
         self.assertEqual(graph.x_axis, 50)
 
-    def test_scale_above_and_including_zero(self):
+    def test_y_scale_above_and_including_zero(self):
         graph = DrawGraph(self.top,(0,-75), (1,2), 160, 160)
-        self.assertEqual(graph.scale, 2)
+        self.assertEqual(graph.y_scale, 2)
         self.assertEqual(graph.x_axis, 0)
 
-    def test_scale_above_and_excluding_zero(self):
+    def test_y_scale_above_and_excluding_zero(self):
         graph = DrawGraph(self.top,(-17,-5), (1,2), 78, 78)
-        self.assertEqual(graph.scale, 4)
+        self.assertEqual(graph.y_scale, 4)
         self.assertEqual(graph.x_axis, 0)
+
+    def test_x_scale_without_values(self):
+        graph = DrawGraph(self.top,(0,), (0,), 10, 10)
+        self.assertEqual(graph.x_scale, 1)
+        
+    def test_x_scale_with_values(self):
+        graph = DrawGraph(self.top,(0,0,0), (0,1,2), 10, 10)
+        self.assertEqual(graph.x_scale, 10)
+        
 
     def test_rank_when_values_less_than_100(self):
         graph = DrawGraph(self.top, (0, 90), (1,2))
