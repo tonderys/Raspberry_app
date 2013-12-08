@@ -1,4 +1,5 @@
-from tkinter import *
+from Tkinter import *
+import Image, ImageDraw, ImageFont
 
 class NoTuplePassedToDraw (Exception):
     pass
@@ -23,17 +24,17 @@ class DrawGraph:
         self.set_range_of_values()
         self.set_x_scale()
 
-        canvas_width = self.max_time_value * self.x_scale 
-        canvas_height = height
+        self.canvas_width = self.max_time_value * self.x_scale 
+        self.canvas_height = height
         scroll_height = 15
         frame_width = width
-        frame_height = canvas_height + scroll_height
+        frame_height = self.canvas_height + scroll_height
         box_for_text_height = 10
 
         self.y_top = 1
-        self.y_bottom = canvas_height - box_for_text_height
+        self.y_bottom = self.canvas_height - box_for_text_height
         self.x_left_border = 1 
-        self.x_right_border = canvas_width 
+        self.x_right_border = self.canvas_width 
         self.x_axis = self.y_bottom
 
         self.top_window = top_window
@@ -41,7 +42,7 @@ class DrawGraph:
         self.set_y_scale()
         self.set_x_axis_position()
         self.setup_frame(frame_width, frame_height, row, column, rowspan, columnspan)
-        self.setup_canvas(frame_width, canvas_width, canvas_height)
+        self.setup_canvas(frame_width, self.canvas_width, self.canvas_height)
  
         self.draw_x_axis_line()
         self.draw_y_axis_line()
@@ -107,19 +108,47 @@ class DrawGraph:
  
         for i in range(1,len(self.values)):
             self.board.create_line(get_x_from_times(i-1), get_y_from_values(i-1), get_x_from_times(i), get_y_from_values(i))
-            self.board.create_line(get_x_from_times(i), self.y_top, get_x_from_times(i), self.y_bottom, fill="grey")
             if int(self.values[i]/self.rank) != remembered_x:
                 self.board.create_text(get_x_from_times(i), get_y_from_values(i), text = self.values[i], font = "arial 8")
                 remembered_x = int(self.values[i]/self.rank)
+            self.board.create_line(get_x_from_times(i), self.y_top, get_x_from_times(i), self.y_bottom, fill="grey")
             
         for time in range(0, int(self.max_time_value), 100):
             self.board.create_text(time, self.y_bottom + 5,  text = time, font = "arial 10")
 
     def get_y_from_values(self, y):
-        return self.x_axis-(self.values[y]*self.y_scale)
+        return int(self.x_axis-(self.values[y]*self.y_scale))
 
     def get_x_from_times(self, x):
-        return self.times[x]*self.x_scale
+        return int(self.times[x]*self.x_scale)
+
+    def export_to_file(self, filename="img"):
+        self.board.postscript(file = filename + ".png", colormode = "color")
+
+    def make_image_to_file(self, filename="img"):
+        white = (255, 255, 255)
+        black = (0, 0, 0)
+        grey = (32, 32, 32)
+        value_font = ImageFont.truetype("arial.ttf", 8)
+        time_font = ImageFont.truetype("arial.ttf", 10)
+
+        image = Image.new("RGB", (int(self.canvas_width), int(self.canvas_height+15)), white)
+        draw = ImageDraw.Draw(image)
+        
+        get_x_from_times = self.get_x_from_times
+        get_y_from_values = self.get_y_from_values
+        remembered_x = 0
+ 
+        for i in range(1,len(self.values)):
+            draw.line([get_x_from_times(i-1), get_y_from_values(i-1), get_x_from_times(i), get_y_from_values(i)], black)
+            if int(self.values[i]/self.rank) != remembered_x:
+                draw.text([get_x_from_times(i), get_y_from_values(i)], str(self.values[i]), black, value_font)
+                remembered_x = int(self.values[i]/self.rank)
+            draw.line([get_x_from_times(i), int(self.y_top), get_x_from_times(i), int(self.y_bottom)], grey)
+            
+        for time in range(0, int(self.max_time_value), 100):
+            draw.text([time, int(self.y_bottom) + 5], str(time), black, time_font)
+        image.save(filename) 
 
 if __name__ == "__main__":
     top_window = Tk()
